@@ -16,6 +16,13 @@ To build the wasm file run:
 GOOS=js GOARCH=wasm go build -o kaprekar.wasm
 ```
 
+The file for wasm build by go can be copied to this directory
+```bash
+cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+```
+Or I used jsdelivr.com to make the git repo file https://github.com/golang/go/blob/master/misc/wasm/wasm_exec.js into a cdn
+https://cdn.jsdelivr.net/gh/golang/go@master/misc/wasm/wasm_exec.js
+
 
 ## References
 https://golangbot.com/webassembly-using-go/
