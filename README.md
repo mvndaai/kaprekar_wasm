@@ -27,3 +27,4 @@ https://cdn.jsdelivr.net/gh/golang/go@master/misc/wasm/wasm_exec.js
 ## References
 https://golangbot.com/webassembly-using-go/
 https://brilliant.org/wiki/kaprekars-constant/
+https://codepo8.github.io/css-fork-on-github-ribbon/
