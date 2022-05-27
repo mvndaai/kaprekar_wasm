@@ -1,28 +1,57 @@
 <html>
-    <head>
+    <head lang="en">
+        <title>Kaprekar Constant</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8"/>
         <script src="https://cdn.jsdelivr.net/gh/golang/go@master/misc/wasm/wasm_exec.js"></script>
         <script>
             const go = new Go();
-            WebAssembly.instantiateStreaming(fetch("kaprekar.wasm"), go.importObject).then((result) => {
-                go.run(result.instance);
-            });
+            const loadGo = WebAssembly.instantiateStreaming(fetch("kaprekar.wasm"), go.importObject)
         </script>
+        <style>
+            body {
+                background-color: linen;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            a {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
+        </style>
     </head>
     <body>
-        <h1>Kaprekar Constant Checker</h1>
+        <h1>Kaprekar Constant</h1>
+
+        <p>Take any non-repeating 4 digit number, subtract the value of the numbers smallest to largest from largest to smallest and you will get 6174 within seven iterations.</p>
 
         <form>
-            <input id="in" type="number" min="100" max="9998" value="2421"/>
-            <input type="submit" value="Go"/>
+            <input id="in" type="number" min="100" max="9998" value="1234"/>
+            <input id="submit" type="submit" disabled="true" value="Show Steps"/>
         </form>
 
-        <pre id="code"></pre>
-
+        <code id="code"></code>
+        <a href="https://github.com/mvndaai/kaprekar_wasm"><img loading="lazy" width="149" height="149" src="https://github.blog/wp-content/uploads/2008/12/forkme_right_darkblue_121621.png?resize=149%2C149" class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
         <script>
+            loadGo.then((result) => {
+                go.run(result.instance);
+                document.querySelector('#submit').disabled = false;
+            });
+
             const input = document.querySelector('#in');
             const form = document.querySelector('form');
             const codeBlock = document.querySelector('#code');
+
+            function randomIntFromInterval(min, max) {
+                return Math.floor(Math.random() * (max - min + 1) + min)
+            }
+            input.value = randomIntFromInterval(1000, 9998);
+            input.focus();
+
+
             form.onsubmit = (e) => {
                 e.preventDefault();
                 const k = JSON.parse(kaprekar(input.value));
