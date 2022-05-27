@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <script src="wasm_exec.js"></script>
+        <script>
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("kaprekar.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Kaprekar Constant Checker</h1>
+
+        <form>
+            <input id="in" type="number" min="100" max="9998" value="2421"/>
+            <input type="submit" value="Go"/>
+        </form>
+
+        <pre id="code"></pre>
+
+        <script>
+            const input = document.querySelector('#in');
+            const form = document.querySelector('form');
+            const codeBlock = document.querySelector('#code');
+            form.onsubmit = (e) => {
+                e.preventDefault();
+                const k = JSON.parse(kaprekar(input.value));
+                console.log(`Response from Go kaprekar(${input.value})`, k);
+                if (k.error) {
+                    codeBlock.innerText = k.error;
+                    return;
+                }
+
+                let str = '';
+                for (row of k.parts) {
+                    str += `${row[0]} - ${row[1]} = ${row[2]}\n`
+                }
+                codeBlock.innerText = str;
+            }
+        </script>
+    </body>
+</html>

@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strconv"
 	"strings"
+	"syscall/js"
 )
 
 var kaprekar_constant = map[int]int{4: 6174, 3: 495}
@@ -12,17 +14,17 @@ var kaprekar_max_iterations = map[int]int{4: 7, 3: 6}
 
 func main() {
 
-	for _, v := range []string{"3215", "450", "1111", "21"} {
-		parts, err := kaprekar(v)
-		out := output{Error: err, Parts: parts}
-		fmt.Println(v, out)
-	}
+	jsFuncName := "kaprekar"
+	js.Global().Set(jsFuncName, kaprekarWrapper())
+	fmt.Printf("Function '%s' loaded from Go\n", jsFuncName)
 
+	// Keep the program alive so functions can be run over and over
+	<-make(chan bool)
 }
 
 type output struct {
-	Error error   `json:"error"`
-	Parts [][]int `json:"parts"`
+	Error interface{} `json:"error"`
+	Parts [][]int     `json:"parts"`
 }
 
 func kaprekar(in string) ([][]int, error) {
@@ -84,4 +86,24 @@ func sortUsingStringSlices(in int, digits int) (int, int) {
 	big, _ := strconv.Atoi(strings.Join(s, ""))
 
 	return small, big
+}
+
+func kaprekarWrapper() js.Func {
+	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if len(args) != 1 {
+			return "Invalid no of arguments passed"
+		}
+		input := args[0].String()
+		parts, err := kaprekar(input)
+		out := output{Parts: parts}
+		if err != nil {
+			out.Error = err.Error()
+		}
+
+		pretty, err := json.Marshal(out)
+		if err != nil {
+			return "Could not marshal json"
+		}
+		return string(pretty)
+	})
 }
