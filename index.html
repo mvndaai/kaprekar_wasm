@@ -59,7 +59,11 @@
 
                 let str = '';
                 for (row of k.parts) {
-                    str += `${row[0]} - ${row[1]} = ${row[2]}\n`
+                    const l = Math.max(`${row[0]}`.length,`${row[1]}`.length,`${row[2]}`.length)
+                    const ascs = `${row[0]}`.padStart(l, '0');
+                    const desc = `${row[1]}`.padStart(l, '0');
+                    const total = `${row[2]}`.padStart(l, '0');
+                    str += `${ascs} - ${desc} = ${total}\n`
                 }
                 codeBlock.innerText = str;
             }
